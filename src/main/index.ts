@@ -2,24 +2,39 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import * as Splashscreen from '@trodi/electron-splashscreen'
+
+const mainOpts: Electron.BrowserWindowConstructorOptions = {
+  width: 900,
+  height: 670,
+  show: false,
+  autoHideMenuBar: true,
+  ...(process.platform === 'linux' ? { icon } : {}),
+  webPreferences: {
+    preload: join(__dirname, '../preload/index.js'),
+    sandbox: false
+  }
+}
+
+const config: Splashscreen.Config = {
+  windowOpts: mainOpts,
+  templateUrl: join(__dirname, '../../src/splash-screen/splash.html'),
+  delay: 0,
+  minVisible: 3000,
+  splashScreenOpts: {
+    height: 600,
+    width: 600,
+    transparent: false
+  }
+}
 
 function createWindow(): void {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
+  const mainWindow: BrowserWindow = Splashscreen.initSplashScreen(config)
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
+  // mainWindow.on('ready-to-show', () => {
+  //   mainWindow.show()
+  // })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
