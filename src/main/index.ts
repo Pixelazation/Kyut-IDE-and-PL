@@ -18,13 +18,13 @@ const mainOpts: Electron.BrowserWindowConstructorOptions = {
 
 const config: Splashscreen.Config = {
   windowOpts: mainOpts,
-  templateUrl: join(__dirname, '../../src/splash-screen/splash.html'),
+  templateUrl: join(__dirname, '../../src/splash-screen/splash-img.jpg'),
   delay: 0,
   minVisible: 3000,
   splashScreenOpts: {
-    height: 600,
-    width: 600,
-    transparent: false
+    width: 736,
+    height: 424,
+    transparent: true
   }
 }
 
