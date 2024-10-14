@@ -5,7 +5,11 @@ module.exports = {
     './src/renderer/src/**/*.{js,ts,jsx,tsx}'
   ],
   theme: {
-    extend: {}
+    extend: {
+      colors: {
+        'pink-light': '#E973A2'
+      }
+    }
   },
   plugins: []
 }
