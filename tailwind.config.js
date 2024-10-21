@@ -7,6 +7,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'pink-fade': '#FFD1DC',
         'pink-light': '#E973A2'
       }
     }
