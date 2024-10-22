@@ -1,6 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { handleFileOpen } from '../ipc-processes/file-handler'
 import icon from '../../resources/icon.png?asset'
 import * as Splashscreen from '@trodi/electron-splashscreen'
 
@@ -66,6 +67,9 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  // IPC processes
+  ipcMain.handle('dialog:openFile', handleFileOpen)
 
   createWindow()
 
