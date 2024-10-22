@@ -1,7 +1,7 @@
-import {BiCircle} from 'react-icons/bi';
+import { FaRegPaste } from 'react-icons/fa6'
 
 function PasteButton(): JSX.Element {
-    return <BiCircle/>
+  return <FaRegPaste />
 }
 
 export default PasteButton

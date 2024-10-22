@@ -1,7 +1,7 @@
-import { BiCircle } from 'react-icons/bi'
+import { IoCut } from 'react-icons/io5'
 
 function CutButton(): JSX.Element {
-  return <BiCircle />
+  return <IoCut />
 }
 
 export default CutButton

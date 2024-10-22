@@ -1,7 +1,7 @@
-import {BiCircle} from 'react-icons/bi';
+import { IoPlayOutline } from 'react-icons/io5'
 
 function ExecuteButton(): JSX.Element {
-    return <BiCircle/>
+  return <IoPlayOutline />
 }
 
 export default ExecuteButton

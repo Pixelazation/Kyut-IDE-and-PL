@@ -1,7 +1,7 @@
-import { BiCircle } from 'react-icons/bi'
+import { FaRegWindowClose } from 'react-icons/fa'
 
 function CloseButton(): JSX.Element {
-  return <BiCircle />
+  return <FaRegWindowClose />
 }
 
 export default CloseButton

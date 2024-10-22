@@ -1,7 +1,7 @@
-import { BiCircle } from 'react-icons/bi'
+import { LuUndo2 } from 'react-icons/lu'
 
 function UndoButton(): JSX.Element {
-  return <BiCircle />
+  return <LuUndo2 />
 }
 
 export default UndoButton

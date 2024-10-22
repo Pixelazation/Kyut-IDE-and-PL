@@ -1,7 +1,7 @@
-import {BiCircle} from 'react-icons/bi';
+import { SiCompilerexplorer } from 'react-icons/si'
 
 function CompileButton(): JSX.Element {
-    return <BiCircle/>
+  return <SiCompilerexplorer />
 }
 
 export default CompileButton

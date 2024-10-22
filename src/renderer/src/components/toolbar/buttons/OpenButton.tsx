@@ -1,7 +1,7 @@
-import {BiCircle} from 'react-icons/bi';
+import { AiOutlineFolderOpen } from 'react-icons/ai'
 
 function OpenButton(): JSX.Element {
-    return <BiCircle/>
+  return <AiOutlineFolderOpen />
 }
 
 export default OpenButton

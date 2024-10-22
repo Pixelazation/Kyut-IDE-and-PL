@@ -1,7 +1,7 @@
-import {BiCircle} from 'react-icons/bi';
+import { LuRedo2 } from 'react-icons/lu'
 
 function RedoButton(): JSX.Element {
-    return <BiCircle/>
+  return <LuRedo2 />
 }
 
-export default RedoButton;
+export default RedoButton

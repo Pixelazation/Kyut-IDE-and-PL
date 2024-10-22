@@ -1,7 +1,7 @@
-import {BiCircle} from 'react-icons/bi';
+import { VscNewFile } from 'react-icons/vsc'
 
 function NewButton(): JSX.Element {
-    return <BiCircle/>
+  return <VscNewFile />
 }
 
 export default NewButton

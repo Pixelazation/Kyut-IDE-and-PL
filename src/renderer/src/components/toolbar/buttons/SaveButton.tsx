@@ -1,7 +1,7 @@
-import {BiCircle} from 'react-icons/bi';
+import { MdOutlineSave } from 'react-icons/md'
 
 function SaveButton(): JSX.Element {
-    return <BiCircle/>
+  return <MdOutlineSave />
 }
 
 export default SaveButton
