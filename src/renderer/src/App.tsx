@@ -1,15 +1,17 @@
 import Toolbar from './components/toolbar/Toolbar'
 import CodeMirror from '@uiw/react-codemirror'
 import { vscodeDark } from '@uiw/codemirror-theme-vscode'
-import { useState } from 'react'
+import CodeProvider, { useCode } from './contexts/code.context'
 
 function App(): JSX.Element {
-  const [code, setCode] = useState<string>('')
+  const { code, setCode } = useCode()
 
   return (
     <>
-      <Toolbar />
-      <CodeMirror value={code} onChange={(code) => setCode(code)} theme={vscodeDark} />
+      <CodeProvider>
+        <Toolbar />
+        <CodeMirror value={code} onChange={(code) => setCode(code)} theme={vscodeDark} />
+      </CodeProvider>
     </>
   )
 }
