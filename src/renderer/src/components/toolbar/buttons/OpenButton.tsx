@@ -11,7 +11,7 @@ function OpenButton(): JSX.Element {
   }
 
   return (
-    <button className="hover:text-pink-dark" onClick={handleClick}>
+    <button className="hover:text-pink-dark" title="Open File" onClick={handleClick}>
       <AiOutlineFolderOpen />
     </button>
   )
