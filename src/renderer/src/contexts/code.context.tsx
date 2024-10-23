@@ -17,15 +17,18 @@ export default function CodeProvider(props: Readonly<CodeAccessProviderPropsType
   const { children } = props
   const [code, setCode] = useState<string>('')
   const [editorOpen, setEditorOpen] = useState<boolean>(false)
+  const [file, setFile] = useState<string>('')
 
   const contextValue = useMemo(
     () => ({
       code,
       editorOpen,
+      file,
       setCode,
-      setEditorOpen
+      setEditorOpen,
+      setFile
     }),
-    [code, editorOpen, setCode, setEditorOpen]
+    [code, editorOpen, file, setCode, setEditorOpen, setFile]
   )
 
   return <CodeContext.Provider value={contextValue}>{children}</CodeContext.Provider>

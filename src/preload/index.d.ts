@@ -6,6 +6,7 @@ declare global {
     electron: ElectronAPI
     api: {
       readFile: (file: string) => string
+      saveFile: (file: string, content: string) => boolean
       selectFile: () => Promise<string>
     }
   }
