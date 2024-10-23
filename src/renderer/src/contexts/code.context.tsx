@@ -16,13 +16,16 @@ export function useCode(): CodeAccessPropsType {
 export default function CodeProvider(props: Readonly<CodeAccessProviderPropsType>): JSX.Element {
   const { children } = props
   const [code, setCode] = useState<string>('')
+  const [editorOpen, setEditorOpen] = useState<boolean>(false)
 
   const contextValue = useMemo(
     () => ({
       code,
-      setCode
+      editorOpen,
+      setCode,
+      setEditorOpen
     }),
-    [code, setCode]
+    [code, editorOpen, setCode, setEditorOpen]
   )
 
   return <CodeContext.Provider value={contextValue}>{children}</CodeContext.Provider>

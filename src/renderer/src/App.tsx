@@ -1,4 +1,4 @@
-import CodeArea from './components/CodeArea'
+import MainBody from './components/body/MainBody'
 import Toolbar from './components/toolbar/Toolbar'
 import CodeProvider from './contexts/code.context'
 
@@ -7,7 +7,7 @@ function App(): JSX.Element {
     <>
       <CodeProvider>
         <Toolbar />
-        <CodeArea />
+        <MainBody />
       </CodeProvider>
     </>
   )
