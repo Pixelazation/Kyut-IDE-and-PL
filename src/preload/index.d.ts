@@ -5,7 +5,9 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: {
+      getSaveFile: () => Promise<string>
       readFile: (file: string) => string
+      saveFile: (file: string, content: string) => boolean
       selectFile: () => Promise<string>
     }
   }

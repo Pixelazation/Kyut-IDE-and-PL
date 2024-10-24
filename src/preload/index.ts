@@ -1,10 +1,21 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 
 // Custom APIs for renderer
 const api = {
+  getSaveFile: (): Promise<string> => ipcRenderer.invoke('dialog:getSaveFile'),
   readFile: (file: string): string => readFileSync(file).toString(),
+  saveFile: (file: string, content: string): boolean => {
+    try {
+      writeFileSync(file, content)
+      return true
+    } catch (err) {
+      console.log(err)
+    }
+
+    return false
+  },
   selectFile: (): Promise<string> => ipcRenderer.invoke('dialog:openFile')
 }
 
