@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync } from 'fs'
 
 // Custom APIs for renderer
 const api = {
-  getSaveFile: (): Promise<string> => ipcRenderer.invoke('dialog:getSaveFile'),
+  getSaveFile: (): Promise<string | null> => ipcRenderer.invoke('dialog:getSaveFile'),
   readFile: (file: string): string => readFileSync(file).toString(),
   saveFile: (file: string, content: string): boolean => {
     try {
@@ -16,7 +16,7 @@ const api = {
 
     return false
   },
-  selectFile: (): Promise<string> => ipcRenderer.invoke('dialog:openFile')
+  selectFile: (): Promise<string | null> => ipcRenderer.invoke('dialog:openFile')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

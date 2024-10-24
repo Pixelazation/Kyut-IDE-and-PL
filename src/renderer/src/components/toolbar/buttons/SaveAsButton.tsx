@@ -7,8 +7,8 @@ function SaveAsButton(): JSX.Element {
   async function handleClick(): Promise<void> {
     const newFile = window.api.getSaveFile()
       
-    newFile.then((newFilePath: string) => {
-      if (newFilePath !== '') {
+    newFile.then((newFilePath: string | null) => {
+      if (newFilePath && newFilePath !== '') {
         setFile(newFilePath)
         window.api.saveFile(newFilePath, code)
       }
