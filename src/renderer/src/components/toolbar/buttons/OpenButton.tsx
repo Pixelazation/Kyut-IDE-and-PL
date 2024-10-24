@@ -6,6 +6,11 @@ function OpenButton(): JSX.Element {
 
   async function handleClick(): Promise<void> {
     const file = await window.api.selectFile()
+
+    if (!file) {
+      return
+    }
+
     const contents = window.api.readFile(file)
     setFile(file)
     setCode(contents)
