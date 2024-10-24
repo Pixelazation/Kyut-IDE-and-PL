@@ -2,10 +2,22 @@ import { useCode } from '@renderer/contexts/code.context'
 import { MdOutlineSave } from 'react-icons/md'
 
 function SaveButton(): JSX.Element {
-  const { code, editorOpen, file } = useCode()
+  const { code, editorOpen, file, setFile } = useCode()
 
-  function handleClick(): void {
-    window.api.saveFile(file, code)
+  async function handleClick(): Promise<void> {
+    if (file === '') {
+      const newFile = window.api.getSaveFile()
+      
+      newFile.then((newFilePath: string) => {
+        if (newFilePath !== '') {
+          setFile(newFilePath)
+          window.api.saveFile(newFilePath, code)
+        }
+      })
+      
+    } else {
+      window.api.saveFile(file, code)
+    }
   }
 
   return (
