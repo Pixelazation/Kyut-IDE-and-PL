@@ -2,7 +2,7 @@ import { useCode } from '@renderer/contexts/code.context'
 import { AiOutlineFolderOpen } from 'react-icons/ai'
 
 function OpenButton(): JSX.Element {
-  const { setCode, setEditorOpen, setFile } = useCode()
+  const { setCode, setEditorOpen, setFile, setLastSavedCode } = useCode()
 
   async function handleClick(): Promise<void> {
     const file = await window.api.selectFile()
@@ -10,6 +10,7 @@ function OpenButton(): JSX.Element {
     setFile(file)
     setCode(contents)
     setEditorOpen(true)
+    setLastSavedCode(contents)
   }
 
   return (
