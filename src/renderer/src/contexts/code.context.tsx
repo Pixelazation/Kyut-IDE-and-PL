@@ -56,15 +56,15 @@ export default function CodeProvider(props: Readonly<CodeAccessProviderPropsType
       setLastSavedCode
     }),
     [
-      code, 
-      editorOpen, 
-      file, 
+      code,
+      editorOpen,
+      file,
       lastSavedCode,
       save,
       saveAs,
-      setCode, 
-      setEditorOpen, 
-      setFile, 
+      setCode,
+      setEditorOpen,
+      setFile,
       setLastSavedCode
     ]
   )

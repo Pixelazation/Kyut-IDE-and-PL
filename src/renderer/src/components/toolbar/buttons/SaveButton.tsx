@@ -20,7 +20,7 @@ function SaveButton(): JSX.Element {
     <button
       className="hover:text-pink-dark disabled:text-gray-600"
       title="Save"
-      disabled={(!editorOpen || !changedFromSave)}
+      disabled={!editorOpen || !changedFromSave}
       onClick={handleClick}
     >
       <MdOutlineSave />

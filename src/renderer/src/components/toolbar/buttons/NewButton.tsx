@@ -3,9 +3,19 @@ import { useCode } from '@renderer/contexts/code.context'
 import { VscNewFile } from 'react-icons/vsc'
 
 function NewButton(): JSX.Element {
-  const { code, file, lastSavedCode, save, saveAs, setCode, setEditorOpen, setFile, setLastSavedCode } = useCode()
+  const {
+    code,
+    file,
+    lastSavedCode,
+    save,
+    saveAs,
+    setCode,
+    setEditorOpen,
+    setFile,
+    setLastSavedCode
+  } = useCode()
 
-  async function handleClick() {
+  async function handleClick(): Promise<void> {
     if (code !== lastSavedCode) {
       const promptResult = await window.api.confirmUnsaved()
 
@@ -24,11 +34,7 @@ function NewButton(): JSX.Element {
   }
 
   return (
-    <button
-      className="hover:text-pink-dark"
-      title="New File"
-      onClick={handleClick}
-    >
+    <button className="hover:text-pink-dark" title="New File" onClick={handleClick}>
       <VscNewFile />
     </button>
   )

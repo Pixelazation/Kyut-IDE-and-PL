@@ -1,7 +1,11 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { handleFileOpen, handleFileSave, showConfirmationPrompt } from '../ipc-processes/file-handler'
+import {
+  handleFileOpen,
+  handleFileSave,
+  showConfirmationPrompt
+} from '../ipc-processes/file-handler'
 import icon from '../../resources/icon.png?asset'
 import * as Splashscreen from '@trodi/electron-splashscreen'
 
@@ -48,7 +52,7 @@ function createWindow(): void {
 
     // Send a message to the renderer to confirm close
     mainWindow.webContents.send('confirm-close')
-  });
+  })
 
   ipcMain.on('close-confirmed', () => {
     console.log('handled ig?')
