@@ -4,13 +4,13 @@ import { LuUndo2 } from 'react-icons/lu'
 
 function UndoButton(): JSX.Element {
   const { editorOpen } = useCode()
-  const { handleUndo } = useEditor()
+  const { canUndo, handleUndo } = useEditor()
 
   return (
     <button
       className="hover:text-pink-dark disabled:text-gray-600"
       title="Undo"
-      disabled={!editorOpen}
+      disabled={!editorOpen || !canUndo}
       onClick={handleUndo}
     >
       <LuUndo2 />

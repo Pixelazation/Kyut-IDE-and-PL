@@ -6,12 +6,22 @@ import { useEditor } from '@renderer/contexts/editor.context'
 function CodeArea(): JSX.Element {
   const { code, setCode } = useCode()
 
-  const { editorRef } = useEditor()
+  const { editorRef, setHasSelection } = useEditor()
+
+  function checkForSelection(): void {
+    const view = editorRef.current?.view
+
+    if (view) {
+      setHasSelection(!view.state.selection.main.empty)
+    }
+  }
 
   return (
     <CodeMirror
       ref={editorRef}
-      value={code} 
+      value={code}
+      onClick={checkForSelection} 
+      onKeyDown={checkForSelection}
       onChange={(code) => setCode(code)}
       theme={vscodeDark}
     />

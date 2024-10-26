@@ -4,13 +4,13 @@ import { LuRedo2 } from 'react-icons/lu'
 
 function RedoButton(): JSX.Element {
   const { editorOpen } = useCode()
-  const { handleRedo } = useEditor()
+  const { canRedo, handleRedo } = useEditor()
 
   return (
     <button
       className="hover:text-pink-dark disabled:text-gray-600"
       title="Redo"
-      disabled={!editorOpen}
+      disabled={!editorOpen || !canRedo}
       onClick={handleRedo}
     >
       <LuRedo2 />

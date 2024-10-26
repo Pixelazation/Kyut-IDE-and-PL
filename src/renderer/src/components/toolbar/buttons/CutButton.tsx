@@ -4,13 +4,13 @@ import { IoCut } from 'react-icons/io5'
 
 function CutButton(): JSX.Element {
   const { editorOpen } = useCode()
-  const { handleCut } = useEditor()
+  const { hasSelection, handleCut } = useEditor()
 
   return (
     <button
       className="hover:text-pink-dark disabled:text-gray-600"
       title="Cut"
-      disabled={!editorOpen}
+      disabled={!editorOpen || !hasSelection}
       onClick={handleCut}
     >
       <IoCut />

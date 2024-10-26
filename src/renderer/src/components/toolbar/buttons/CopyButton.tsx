@@ -4,13 +4,13 @@ import { IoCopy } from 'react-icons/io5'
 
 function CopyButton(): JSX.Element {
   const { editorOpen } = useCode()
-  const { handleCopy } = useEditor()
+  const { hasSelection, handleCopy } = useEditor()
 
   return (
     <button
       className="hover:text-pink-dark disabled:text-gray-600"
       title="Copy"
-      disabled={!editorOpen}
+      disabled={!editorOpen || !hasSelection}
       onClick={handleCopy}
     >
       <IoCopy />

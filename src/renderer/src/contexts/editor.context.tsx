@@ -1,10 +1,17 @@
-import React, { createContext, useRef, useContext } from 'react'
+import React, { createContext, useRef, useContext, useState, useEffect, useMemo } from 'react'
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
-import { undo, redo } from '@codemirror/commands'
+import { undo, redo, redoDepth, undoDepth } from '@codemirror/commands'
+import { useCode } from './code.context'
 
 // Define the context type
 interface EditorContextType {
   editorRef: React.RefObject<ReactCodeMirrorRef>
+  hasSelection: boolean
+  canUndo: boolean
+  canRedo: boolean
+  setHasSelection: React.Dispatch<React.SetStateAction<boolean>>
+  setCanUndo: React.Dispatch<React.SetStateAction<boolean>>
+  setCanRedo: React.Dispatch<React.SetStateAction<boolean>> 
   handleCopy: () => void
   handleCut: () => void
   handlePaste: () => void
@@ -27,6 +34,20 @@ export const useEditor = () => {
 // Provider component
 export const EditorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const editorRef = useRef<ReactCodeMirrorRef>(null)
+  const [hasSelection, setHasSelection] = useState<boolean>(false)
+  const [canUndo, setCanRedo] = useState<boolean>(false)
+  const [canRedo, setCanUndo] = useState<boolean>(false)
+
+  const { code } = useCode()
+  const view = editorRef.current?.view
+
+  useEffect(() => {
+    if (view) {
+      setCanUndo(redoDepth(view.state) > 0)
+      setCanRedo(undoDepth(view.state) > 0)
+      setHasSelection(!view.state.selection.main.empty)
+    }
+  }, [code])
 
   const handleCopy = () => {
     if (navigator.clipboard && editorRef.current) {
@@ -90,8 +111,39 @@ export const EditorProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }
 
+  const contextValue = useMemo(
+    () => ({
+      editorRef,
+      hasSelection,
+      canUndo,
+      canRedo,
+      setHasSelection,
+      setCanUndo,
+      setCanRedo,
+      handleCopy,
+      handleCut,
+      handlePaste,
+      handleRedo,
+      handleUndo
+    }),
+    [
+      editorRef,
+      hasSelection,
+      canUndo,
+      canRedo,
+      setHasSelection,
+      setCanUndo,
+      setCanRedo,
+      handleCopy,
+      handleCut,
+      handlePaste,
+      handleRedo,
+      handleUndo
+    ]
+  )
+
   return (
-    <EditorContext.Provider value={{ editorRef, handleCopy, handleCut, handlePaste, handleUndo, handleRedo }}>
+    <EditorContext.Provider value={contextValue}>
       {children}
     </EditorContext.Provider>
   )
