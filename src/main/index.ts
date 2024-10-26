@@ -13,6 +13,7 @@ const mainOpts: Electron.BrowserWindowConstructorOptions = {
   width: 900,
   height: 670,
   show: false,
+  title: 'Kyut IDE',
   autoHideMenuBar: true,
   ...(process.platform === 'linux' ? { icon } : {}),
   webPreferences: {
