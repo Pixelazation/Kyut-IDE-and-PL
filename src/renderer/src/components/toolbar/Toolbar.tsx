@@ -1,5 +1,6 @@
 import CloseButton from './buttons/CloseButton'
 import CompileButton from './buttons/CompileButton'
+import CopyButton from './buttons/CopyButton'
 import CutButton from './buttons/CutButton'
 import ExecuteButton from './buttons/ExecuteButton'
 import NewButton from './buttons/NewButton'
@@ -22,6 +23,7 @@ function Toolbar(): JSX.Element {
           <CloseButton />
         </div>
         <div className="flex flex-row gap-2">
+          <CopyButton />
           <CutButton />
           <PasteButton />
           <UndoButton />

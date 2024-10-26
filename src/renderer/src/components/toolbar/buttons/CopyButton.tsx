@@ -1,21 +1,21 @@
 import { useCode } from '@renderer/contexts/code.context'
 import { useEditor } from '@renderer/contexts/editor.context'
-import { FaRegPaste } from 'react-icons/fa6'
+import { IoCopy } from 'react-icons/io5'
 
-function PasteButton(): JSX.Element {
+function CopyButton(): JSX.Element {
   const { editorOpen } = useCode()
-  const { handlePaste } = useEditor()
+  const { hasSelection, handleCopy } = useEditor()
 
   return (
     <button
       className="hover:text-pink-dark disabled:text-gray-600"
-      title="Paste"
-      disabled={!editorOpen}
-      onClick={handlePaste}
+      title="Copy"
+      disabled={!editorOpen || !hasSelection}
+      onClick={handleCopy}
     >
-      <FaRegPaste />
+      <IoCopy />
     </button>
   )
 }
 
-export default PasteButton
+export default CopyButton
