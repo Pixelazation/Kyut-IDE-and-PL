@@ -20,12 +20,31 @@ export default function CodeProvider(props: Readonly<CodeAccessProviderPropsType
   const [file, setFile] = useState<string>('')
   const [lastSavedCode, setLastSavedCode] = useState<string>('')
 
+  function save(): void {
+    window.api.saveFile(file, code)
+    setLastSavedCode(code)
+  }
+
+  function saveAs(): void {
+    const newFile = window.api.getSaveFile()
+    
+    newFile.then((newFilePath: string | null) => {
+      if (newFilePath && newFilePath !== '') {
+        setFile(newFilePath)
+        window.api.saveFile(newFilePath, code)
+        setLastSavedCode(code)
+      }
+    })
+  }
+
   const contextValue = useMemo(
     () => ({
       code,
       editorOpen,
       file,
       lastSavedCode,
+      save,
+      saveAs,
       setCode,
       setEditorOpen,
       setFile,
@@ -35,7 +54,9 @@ export default function CodeProvider(props: Readonly<CodeAccessProviderPropsType
       code, 
       editorOpen, 
       file, 
-      lastSavedCode, 
+      lastSavedCode,
+      save,
+      saveAs,
       setCode, 
       setEditorOpen, 
       setFile, 
