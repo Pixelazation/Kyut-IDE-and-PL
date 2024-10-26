@@ -1,29 +1,12 @@
-import React, { createContext, useRef, useContext, useState, useEffect, useMemo } from 'react'
+import { createContext, useRef, useContext, useState, useEffect, useMemo } from 'react'
 import { ReactCodeMirrorRef } from '@uiw/react-codemirror'
 import { undo, redo, redoDepth, undoDepth } from '@codemirror/commands'
 import { useCode } from './code.context'
+import { EditorPropsType, EditorProviderPropsType } from '@renderer/types/editor.type'
 
-// Define the context type
-interface EditorContextType {
-  editorRef: React.RefObject<ReactCodeMirrorRef>
-  hasSelection: boolean
-  canUndo: boolean
-  canRedo: boolean
-  setHasSelection: React.Dispatch<React.SetStateAction<boolean>>
-  setCanUndo: React.Dispatch<React.SetStateAction<boolean>>
-  setCanRedo: React.Dispatch<React.SetStateAction<boolean>> 
-  handleCopy: () => void
-  handleCut: () => void
-  handlePaste: () => void
-  handleUndo: () => void
-  handleRedo: () => void
-}
+const EditorContext = createContext<EditorPropsType | undefined>(undefined)
 
-// Create the context with default values
-const EditorContext = createContext<EditorContextType | undefined>(undefined)
-
-// Custom hook to use the context
-export const useEditor = () => {
+export const useEditor = (): EditorPropsType => {
   const context = useContext(EditorContext)
   if (!context) {
     throw new Error('useEditorContext must be used within an EditorProvider')
@@ -31,8 +14,8 @@ export const useEditor = () => {
   return context
 }
 
-// Provider component
-export const EditorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export default function EditorProvider(props: Readonly<EditorProviderPropsType>): JSX.Element {
+  const { children } = props
   const editorRef = useRef<ReactCodeMirrorRef>(null)
   const [hasSelection, setHasSelection] = useState<boolean>(false)
   const [canUndo, setCanRedo] = useState<boolean>(false)
