@@ -42,6 +42,19 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
+  mainWindow.on('close', (event) => {
+    // Prevent the default close action
+    event.preventDefault()
+
+    // Send a message to the renderer to confirm close
+    mainWindow.webContents.send('confirm-close')
+  });
+
+  ipcMain.on('close-confirmed', () => {
+    console.log('handled ig?')
+    mainWindow.destroy()
+  })
+
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {

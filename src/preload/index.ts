@@ -17,7 +17,12 @@ const api = {
 
     return false
   },
-  selectFile: (): Promise<string | null> => ipcRenderer.invoke('dialog:openFile')
+  selectFile: (): Promise<string | null> => ipcRenderer.invoke('dialog:openFile'),
+
+  onConfirmClose: (callback: () => void): Electron.IpcRenderer =>
+    ipcRenderer.on('confirm-close', () => callback()),
+  confirmClose: (): void => ipcRenderer.send('close-confirmed'),
+  refreshCloseListener: (): Electron.IpcRenderer => ipcRenderer.removeAllListeners('confirm-close')
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

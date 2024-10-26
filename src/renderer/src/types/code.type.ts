@@ -5,8 +5,8 @@ export type CodeAccessPropsType = {
   editorOpen: boolean
   file: string
   lastSavedCode: string
-  save: () => void
-  saveAs: () => void
+  save: () => Promise<boolean>
+  saveAs: () => Promise<boolean>
   setCode: React.Dispatch<React.SetStateAction<string>>
   setEditorOpen: React.Dispatch<React.SetStateAction<boolean>>
   setFile: React.Dispatch<React.SetStateAction<string>>
