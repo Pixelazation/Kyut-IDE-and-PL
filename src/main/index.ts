@@ -1,7 +1,11 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { handleFileOpen, handleFileSave, showConfirmationPrompt } from '../ipc-processes/file-handler'
+import {
+  handleFileOpen,
+  handleFileSave,
+  showConfirmationPrompt
+} from '../ipc-processes/file-handler'
 import icon from '../../resources/icon.png?asset'
 import * as Splashscreen from '@trodi/electron-splashscreen'
 
@@ -40,6 +44,19 @@ function createWindow(): void {
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
+  })
+
+  mainWindow.on('close', (event) => {
+    // Prevent the default close action
+    event.preventDefault()
+
+    // Send a message to the renderer to confirm close
+    mainWindow.webContents.send('confirm-close')
+  })
+
+  ipcMain.on('close-confirmed', () => {
+    console.log('handled ig?')
+    mainWindow.destroy()
   })
 
   // HMR for renderer base on electron-vite cli.

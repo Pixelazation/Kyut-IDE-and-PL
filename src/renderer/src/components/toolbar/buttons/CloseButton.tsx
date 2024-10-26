@@ -1,5 +1,6 @@
 import { ConfirmationOptions } from '@renderer/constants'
 import { useCode } from '@renderer/contexts/code.context'
+import { useEffect } from 'react'
 import { FaRegWindowClose } from 'react-icons/fa'
 
 function CloseButton(): JSX.Element {
@@ -16,12 +17,34 @@ function CloseButton(): JSX.Element {
       } else if (promptResult === ConfirmationOptions.SAVE) {
         file === '' ? saveAs() : save()
       }
-
     } else {
       setEditorOpen(false)
       setCode('')
     }
   }
+
+  useEffect(() => {
+    window.api.refreshCloseListener()
+
+    window.api.onConfirmClose(() => {
+      if (code !== lastSavedCode) {
+        console.log('did i even')
+        const promptResult = window.api.confirmUnsaved()
+
+        promptResult.then(async (result: number) => {
+          if (result === ConfirmationOptions.OK) {
+            window.api.confirmClose()
+          } else if (result === ConfirmationOptions.SAVE) {
+            const saveResult = file === '' ? saveAs() : save()
+
+            saveResult.then((saveRes) => (saveRes ? window.api.confirmClose() : null))
+          }
+        })
+      } else {
+        window.api.confirmClose()
+      }
+    })
+  }, [code])
 
   return (
     <button
