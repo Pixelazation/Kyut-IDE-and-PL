@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from 'fs'
 
 // Custom APIs for renderer
 const api = {
+  confirmUnsaved: (): Promise<number> => ipcRenderer.invoke('dialog:confirmUnsaved'),
   getSaveFile: (): Promise<string | null> => ipcRenderer.invoke('dialog:getSaveFile'),
   readFile: (file: string): string => readFileSync(file).toString(),
   saveFile: (file: string, content: string): boolean => {

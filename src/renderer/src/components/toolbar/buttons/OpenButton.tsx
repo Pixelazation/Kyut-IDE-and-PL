@@ -1,18 +1,30 @@
+import { ConfirmationOptions } from '@renderer/constants'
 import { useCode } from '@renderer/contexts/code.context'
 import { AiOutlineFolderOpen } from 'react-icons/ai'
 
 function OpenButton(): JSX.Element {
-  const { setCode, setEditorOpen, setFile, setLastSavedCode } = useCode()
+  const { code, file, lastSavedCode, save, saveAs, setCode, setEditorOpen, setFile, setLastSavedCode } = useCode()
 
   async function handleClick(): Promise<void> {
-    const file = await window.api.selectFile()
+    if (code !== lastSavedCode) {
+      const promptResult = await window.api.confirmUnsaved()
 
-    if (!file) {
+      if (promptResult === ConfirmationOptions.OK) {
+        setEditorOpen(false)
+        setCode('')
+      } else if (promptResult === ConfirmationOptions.SAVE) {
+        file === '' ? saveAs() : save()
+      }
+    }
+
+    const selectedFile = await window.api.selectFile()
+
+    if (!selectedFile) {
       return
     }
 
-    const contents = window.api.readFile(file)
-    setFile(file)
+    const contents = window.api.readFile(selectedFile)
+    setFile(selectedFile)
     setCode(contents)
     setEditorOpen(true)
     setLastSavedCode(contents)

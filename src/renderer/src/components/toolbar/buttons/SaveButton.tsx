@@ -3,25 +3,11 @@ import { useEffect, useState } from 'react'
 import { MdOutlineSave } from 'react-icons/md'
 
 function SaveButton(): JSX.Element {
-  const { code, editorOpen, file, lastSavedCode, setFile, setLastSavedCode } = useCode()
+  const { code, editorOpen, file, lastSavedCode, save, saveAs } = useCode()
   const [changedFromSave, setChangedFromSave] = useState<boolean>(false)
 
   async function handleClick(): Promise<void> {
-    if (file === '') {
-      const newFile = window.api.getSaveFile()
-      
-      newFile.then((newFilePath: string | null) => {
-        if (newFilePath && newFilePath !== '') {
-          setFile(newFilePath)
-          window.api.saveFile(newFilePath, code)
-          setLastSavedCode(code)
-        }
-      })
-      
-    } else {
-      window.api.saveFile(file, code)
-      setLastSavedCode(code)
-    }
+    file === '' ? saveAs() : save()
   }
 
   // Check if code has changed from last save
