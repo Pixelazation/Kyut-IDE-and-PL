@@ -1,4 +1,5 @@
 import { dialog } from 'electron'
+import { ConfirmationOptions } from '../constants/confirmation.constants'
 
 const extensions = [{
   name: '.kyot, .kyut, .uwu',
@@ -21,4 +22,17 @@ export async function handleFileSave(): Promise<string | null> {
   }
 
   return null
+}
+
+export async function showConfirmationPrompt(): Promise<number> {
+  const result = await dialog.showMessageBox({
+    type: 'question',
+    buttons: ['Yes', 'Cancel', 'Save'],
+    defaultId: ConfirmationOptions.OK, // 'OK' will be the default button
+    cancelId: ConfirmationOptions.CANCEL, // 'Cancel' will be the cancel button
+    title: 'Confirmation',
+    message: 'You have unsaved changes. Are you sure you want to discard them?',
+  });
+
+  return result.response; // Returns true if 'OK' was clicked
 }

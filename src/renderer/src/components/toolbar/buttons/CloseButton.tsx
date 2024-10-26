@@ -1,13 +1,26 @@
+import { ConfirmationOptions } from '@renderer/constants'
 import { useCode } from '@renderer/contexts/code.context'
 import { FaRegWindowClose } from 'react-icons/fa'
 
 function CloseButton(): JSX.Element {
-  const { editorOpen, setCode, setEditorOpen } = useCode()
+  const { code, editorOpen, file, lastSavedCode, save, saveAs, setCode, setEditorOpen } = useCode()
 
-  function handleClick(): void {
+  async function handleClick(): Promise<void> {
     //TODO: Prompt for confirmation
-    setEditorOpen(false)
-    setCode('')
+    if (code !== lastSavedCode) {
+      const promptResult = await window.api.confirmUnsaved()
+
+      if (promptResult === ConfirmationOptions.OK) {
+        setEditorOpen(false)
+        setCode('')
+      } else if (promptResult === ConfirmationOptions.SAVE) {
+        file === '' ? saveAs() : save()
+      }
+
+    } else {
+      setEditorOpen(false)
+      setCode('')
+    }
   }
 
   return (

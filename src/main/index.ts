@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import { handleFileOpen, handleFileSave } from '../ipc-processes/file-handler'
+import { handleFileOpen, handleFileSave, showConfirmationPrompt } from '../ipc-processes/file-handler'
 import icon from '../../resources/icon.png?asset'
 import * as Splashscreen from '@trodi/electron-splashscreen'
 
@@ -71,6 +71,7 @@ app.whenReady().then(() => {
   // IPC processes
   ipcMain.handle('dialog:openFile', handleFileOpen)
   ipcMain.handle('dialog:getSaveFile', handleFileSave)
+  ipcMain.handle('dialog:confirmUnsaved', showConfirmationPrompt)
 
   createWindow()
 
