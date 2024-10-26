@@ -1,21 +1,21 @@
 import { useCode } from '@renderer/contexts/code.context'
 import { useEditor } from '@renderer/contexts/editor.context'
-import { LuUndo2 } from 'react-icons/lu'
+import { IoCopy } from 'react-icons/io5'
 
-function UndoButton(): JSX.Element {
+function CopyButton(): JSX.Element {
   const { editorOpen } = useCode()
-  const { handleUndo } = useEditor()
+  const { handleCopy } = useEditor()
 
   return (
     <button
       className="hover:text-pink-dark disabled:text-gray-600"
-      title="Undo"
+      title="Copy"
       disabled={!editorOpen}
-      onClick={handleUndo}
+      onClick={handleCopy}
     >
-      <LuUndo2 />
+      <IoCopy />
     </button>
   )
 }
 
-export default UndoButton
+export default CopyButton
