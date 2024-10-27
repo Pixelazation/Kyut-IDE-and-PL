@@ -24,7 +24,7 @@ const mainOpts: Electron.BrowserWindowConstructorOptions = {
 
 const config: Splashscreen.Config = {
   windowOpts: mainOpts,
-  templateUrl: join(__dirname, '../../src/splash-screen/splash-img.jpg'),
+  templateUrl: join(__dirname, '../../src/splash-screen/splash-screen-final.png'),
   delay: 0,
   minVisible: 3000,
   splashScreenOpts: {
