@@ -1,3 +1,19 @@
+// function Landing(): JSX.Element {
+//   return (
+//     <div className="h-full font-mono">
+//       <h1>Welcome to Kyut</h1>
+//       <p>An IDE and Programming Language by:</p>
+//       <ul>
+//         <li>Dee, Francis Philippe</li>
+//         <li>Ramacula, Mary Jannin</li>
+//         <li>Tan, Joshua David</li>
+//       </ul>
+//     </div>
+//   )
+// }
+
+// export default Landing
+
 function Landing(): JSX.Element {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-200 via-pink-300 to-pink-500 text-gray-800 font-mono p-4">
@@ -16,4 +32,3 @@ function Landing(): JSX.Element {
 }
 
 export default Landing;
-
