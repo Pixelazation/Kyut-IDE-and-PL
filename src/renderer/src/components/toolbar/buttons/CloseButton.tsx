@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { FaRegWindowClose } from 'react-icons/fa'
 
 function CloseButton(): JSX.Element {
-  const { code, editorOpen, file, lastSavedCode, save, saveAs, setCode, setEditorOpen } = useCode()
+  const { code, editorOpen, file, lastSavedCode, save, saveAs, setCode, setLastSavedCode, setEditorOpen } = useCode()
 
   async function handleClick(): Promise<void> {
     //TODO: Prompt for confirmation
@@ -14,12 +14,14 @@ function CloseButton(): JSX.Element {
       if (promptResult === ConfirmationOptions.OK) {
         setEditorOpen(false)
         setCode('')
+        setLastSavedCode('')
       } else if (promptResult === ConfirmationOptions.SAVE) {
         file === '' ? saveAs() : save()
       }
     } else {
       setEditorOpen(false)
       setCode('')
+      setLastSavedCode('')
     }
   }
 
