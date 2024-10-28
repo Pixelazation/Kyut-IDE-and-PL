@@ -11,7 +11,7 @@ import * as Splashscreen from '@trodi/electron-splashscreen'
 
 const mainOpts: Electron.BrowserWindowConstructorOptions = {
   width: 900,
-  height: 670,
+  height: 605,
   show: false,
   title: 'Kyut IDE',
   autoHideMenuBar: true,
