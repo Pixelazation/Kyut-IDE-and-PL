@@ -13,6 +13,8 @@ declare global {
       onConfirmClose: (callback: () => void) => Electron.IpcRenderer
       confirmClose: () => void
       refreshCloseListener: () => Electron.IpcRenderer
+      compile: (filePath: string) => Promise<null>
+      run: (filePath: string) => Promise<null>
     }
   }
 }

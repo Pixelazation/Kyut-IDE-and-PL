@@ -8,6 +8,7 @@ import {
 } from '../ipc-processes/file-handler'
 import icon from '../../resources/icon.png?asset'
 import * as Splashscreen from '@trodi/electron-splashscreen'
+import { handleCompile, handleRun } from '../ipc-processes/cmd-handler'
 
 const mainOpts: Electron.BrowserWindowConstructorOptions = {
   width: 900,
@@ -90,6 +91,9 @@ app.whenReady().then(() => {
   ipcMain.handle('dialog:openFile', handleFileOpen)
   ipcMain.handle('dialog:getSaveFile', handleFileSave)
   ipcMain.handle('dialog:confirmUnsaved', showConfirmationPrompt)
+
+  ipcMain.handle('cmd:compile', (e, ...args) => handleCompile(args[0] as string))
+  ipcMain.handle('cmd:run', (e, ...args) => handleRun(args[0] as string))
 
   createWindow()
 

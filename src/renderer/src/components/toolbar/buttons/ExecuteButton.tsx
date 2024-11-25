@@ -9,6 +9,7 @@ function ExecuteButton(): JSX.Element {
       className="hover:text-pink-dark disabled:text-gray-600"
       title="Execute"
       disabled={!editorOpen}
+      onClick={() => window.api.run('test')}
     >
       <IoPlayOutline />
     </button>

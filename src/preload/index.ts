@@ -22,7 +22,10 @@ const api = {
   onConfirmClose: (callback: () => void): Electron.IpcRenderer =>
     ipcRenderer.on('confirm-close', () => callback()),
   confirmClose: (): void => ipcRenderer.send('close-confirmed'),
-  refreshCloseListener: (): Electron.IpcRenderer => ipcRenderer.removeAllListeners('confirm-close')
+  refreshCloseListener: (): Electron.IpcRenderer => ipcRenderer.removeAllListeners('confirm-close'),
+
+  compile: (filePath: string): Promise<null> => ipcRenderer.invoke('cmd:compile', filePath),
+  run: (filePath: string): Promise<null> => ipcRenderer.invoke('cmd:run', filePath)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
