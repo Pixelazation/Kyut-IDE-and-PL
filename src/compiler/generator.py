@@ -34,6 +34,7 @@ class CodeGenerator:
 
     self._addLine()
     self._comment('OPERATIONS')
+    self._addLine('main:')
     self._operationList(self._tree.children[1])
 
     self._addLine()
