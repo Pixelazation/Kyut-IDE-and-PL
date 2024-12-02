@@ -6,6 +6,7 @@ class CodeGenerator:
   def __init__(self, tree: Node):
     self._tree = tree
     self._code = ""
+    self._symbolTable = {}
 
   def generateProgram(self):
     self._generateDeclarations()
@@ -50,22 +51,26 @@ class CodeGenerator:
 
     self._addLine('addi $sp, $sp, -4')
 
-    self._addLine(f'{loadOp} $t0 {loadee}')
+    self._addLine(f'{loadOp} $t0, {loadee}')
 
-    self._addLine('sw $t0 ($sp)')
+    self._addLine('sw $t0, ($sp)')
 
   def _pushStackFromReg(self, register: int):
     reg = f'$t{register}'
 
     self._addLine('addi $sp, $sp, -4')
-    self._addLine(f'sw {reg} ($sp)')
+    self._addLine(f'sw {reg}, ($sp)')
 
 
   def _popStack(self, register: int):
     reg = f'$t{register}'
 
-    self._addLine(f'lw {reg} ($sp)')
+    self._addLine(f'lw {reg}, ($sp)')
     self._addLine('addi $sp, $sp, 4')
+
+  def _printInt(self):
+    self._addLine('li $v0, 1           # Load system directive (1 = print_int)')
+    self._addLine('syscall')
 
   # Productions
 
@@ -79,8 +84,10 @@ class CodeGenerator:
     
     if (type == DataTypesEnum.STRING):
       self._addLine(f'stw_{var_name}: .space 128')
+      self._symbolTable[var_name] = f'stw_{var_name}'
     elif (type == DataTypesEnum.NUMBER):
       self._addLine(f'nom_{var_name}: .word')
+      self._symbolTable[var_name] = f'nom_{var_name}'
 
   def _operationList(self, opList: Node):
     for opStmt in opList.children:
@@ -89,39 +96,76 @@ class CodeGenerator:
   def _operationStatement(self, opStmt: Node):
     type = opStmt.type
 
-    for child in opStmt.children:
-      self._term(child)
-
     if (type in BINARY_OPS):
-      self._binaryOp(type)
+      self._binaryOp(opStmt)
+
     elif (type == ProductionTokensEnum.ASSIGN):
-      pass
+      self._assignment(opStmt)
+
     elif (type == ProductionTokensEnum.INPUT):
       pass
-    elif (type == ProductionTokensEnum.OUTPUT):
-      pass
-  
-  def _term(self, term: Node):
-    if term.type in BINARY_OPS:
-      self._operationStatement(term)
-    else:
-      self._pushStack(term.value)
 
-  def _binaryOp(self, type: ProductionTokensEnum):
+    elif (type == ProductionTokensEnum.OUTPUT):
+      self._output(opStmt)
+  
+  def _expression(self, exp: Node):
+    if exp.type in BINARY_OPS:
+      self._operationStatement(exp)
+    else:
+      self._pushStack(exp.value)
+
+  def _binaryOp(self, opStmt: Node):
+    type = opStmt.type
+
+    for child in opStmt.children:
+        self._expression(child)
+
     self._popStack(1)     # Pop Second Operand to $t1
     self._popStack(0)     # Pop First Operand to $t0
 
     if (type == ProductionTokensEnum.PLUS):
-      self._addLine('add $t0 $t0 $t1')
+      self._addLine('add $t0, $t0, $t1')
     elif(type == ProductionTokensEnum.MINUS):
-      self._addLine('sub $t0 $t0 $t1')
+      self._addLine('sub $t0, $t0, $t1')
     elif(type == ProductionTokensEnum.TIMES):
-      self._addLine('mul $t0 $t0 $t1')
+      self._addLine('mul $t0, $t0, $t1')
     elif(type == ProductionTokensEnum.DIVIDE):
-      self._addLine('div $t0 $t0 $t1')
+      self._addLine('div $t0, $t0, $t1')
     
     self._pushStackFromReg(0)
 
+  def _assignment(self, asOp: Node):
+    id = asOp.children[0].value
+    address = self._symbolTable[id]
+
+    valueNode = asOp.children[1]
+
+    if valueNode.type == ProductionTokensEnum.STRING:
+      pass
+
+    else:
+      self._expression(asOp.children[1])
+
+      self._popStack(0)
+      self._addLine(f'sw $t0, {address}')
+
+  def _output(self, outputOp: Node):
+    valueNode = outputOp.children[0]
+
+    if valueNode.type == ProductionTokensEnum.STRING:
+      return
+
+    if valueNode.type == ProductionTokensEnum.ID:
+      # YOU NEED TO CHECK IF STRINGGGGGG
+      self._addLine(f'lw $a0, {self._symbolTable[valueNode.value]}')
+      self._printInt()
+
+    else:
+      self._expression(valueNode)
+      self._popStack(0)
+      self._addLine('move $a0, $t0')
+      self._printInt()
+      
 
 # Sample
 
@@ -143,7 +187,15 @@ op1 = Node(ProductionTokensEnum.PLUS)
 op1.addChild(Node(ProductionTokensEnum.NUMBER, 5))
 op1.addChild(Node(ProductionTokensEnum.NUMBER, 12))
 
-op_list.addChild(op1)
+op2 = Node(ProductionTokensEnum.ASSIGN)
+op2.addChild(Node(ProductionTokensEnum.ID, 'x'))
+op2.addChild(op1)
+
+out = Node(ProductionTokensEnum.OUTPUT)
+out.addChild(Node(ProductionTokensEnum.ID, 'x'))
+
+op_list.addChild(op2)
+op_list.addChild(out)
 
 start.addChild(dec_list)
 start.addChild(op_list)
