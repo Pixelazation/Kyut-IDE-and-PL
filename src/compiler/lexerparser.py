@@ -1,3 +1,6 @@
+from __future__ import annotations
+from typing import List
+
 import re
 
 # Scanner for identifiers, numbers, and keywords
@@ -166,10 +169,11 @@ class Parser:
         
 # Tree
 class Node:
-    def __init__(self, data):
-        self.data = data
-        self.children =[]
-    def addChild(self, child):
+    def __init__(self, type, value=None):
+        self.type = type
+        self.value = value
+        self.children: List[Node] = []
+    def addChild(self, child: Node):
         self.children.append(child)
 def printLevelOrder(root):
     q = []
@@ -227,6 +231,6 @@ def tokenize(h:str, root:Node)->list:
 
 # printLevelOrder(language)
 
-print(Parser(lexer(open(input(),"r").read())).parse())
+# print(Parser(lexer(open(input(),"r").read())).parse())
 # How to separate lexer-parser
 # Validate declared variables/IDs
