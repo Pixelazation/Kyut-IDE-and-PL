@@ -1,12 +1,13 @@
 from lexerparser import Node
 from enums import *
+from typing import Dict
 
 # Generator
 class CodeGenerator:
   def __init__(self, tree: Node):
     self._tree = tree
     self._code = ""
-    self._symbolTable = {}
+    self._symbolTable: Dict[str, str] = {}
 
   def generateProgram(self):
     self._generateDeclarations()
@@ -19,6 +20,17 @@ class CodeGenerator:
 
   def _comment(self, comment: str):
     self._addLine(f'# {comment}')
+
+  def _getIdType(self, idNode: Node) -> DataTypesEnum:
+    address = self._symbolTable[idNode.value]
+    prefix = address[0:3]
+
+    if prefix == 'stw':
+      return DataTypesEnum.STRING
+    elif prefix == 'nom':
+      return DataTypesEnum.NUMBER
+    
+    raise Exception('HOW AND WHY??? okay im good... (type error)')
 
   def _generateDeclarations(self):
     self._comment('VARIABLE DECLARATIONS')
@@ -69,8 +81,8 @@ class CodeGenerator:
     self._addLine(f'lw {reg}, ($sp)')
     self._addLine('addi $sp, $sp, 4')
 
-  def _printInt(self):
-    self._addLine('li $v0, 1           # Load system directive (1 = print_int)')
+  def _syscall(self, code: SysCallsEnum):
+    self._addLine(f'li $v0, {code.value}           # Load system directive')
     self._addLine('syscall')
 
   # Productions
@@ -87,7 +99,7 @@ class CodeGenerator:
       self._addLine(f'stw_{var_name}: .space 128')
       self._symbolTable[var_name] = f'stw_{var_name}'
     elif (type == DataTypesEnum.NUMBER):
-      self._addLine(f'nom_{var_name}: .word')
+      self._addLine(f'nom_{var_name}: .word 0')
       self._symbolTable[var_name] = f'nom_{var_name}'
 
   def _operationList(self, opList: Node):
@@ -104,7 +116,7 @@ class CodeGenerator:
       self._assignment(opStmt)
 
     elif (type == ProductionTokensEnum.INPUT):
-      pass
+      self._input(opStmt)
 
     elif (type == ProductionTokensEnum.OUTPUT):
       self._output(opStmt)
@@ -150,6 +162,17 @@ class CodeGenerator:
       self._popStack(0)
       self._addLine(f'sw $t0, {address}')
 
+  def _input(self, inputOp: Node):
+    idNode = inputOp.children[0]
+    type = self._getIdType(idNode)
+
+    if (type == DataTypesEnum.STRING):
+      pass
+    elif (type == DataTypesEnum.NUMBER):
+      self._syscall(SysCallsEnum.READ_INT)
+      self._addLine(f'sw $v0, {self._symbolTable[idNode.value]}')
+
+
   def _output(self, outputOp: Node):
     valueNode = outputOp.children[0]
 
@@ -159,13 +182,13 @@ class CodeGenerator:
     if valueNode.type == ProductionTokensEnum.ID:
       # YOU NEED TO CHECK IF STRINGGGGGG
       self._addLine(f'lw $a0, {self._symbolTable[valueNode.value]}')
-      self._printInt()
+      self._syscall(SysCallsEnum.PRINT_INT)
 
     else:
       self._expression(valueNode)
       self._popStack(0)
       self._addLine('move $a0, $t0')
-      self._printInt()
+      self._syscall(SysCallsEnum.PRINT_INT)
       
 
 # Sample
@@ -175,12 +198,16 @@ start = Node(ProductionTokensEnum.PROGRAM)
 dec_list = Node(ProductionTokensEnum.DEC_LIST)
 dec_list.addChild(Node(ProductionTokensEnum.DEC))
 dec_list.addChild(Node(ProductionTokensEnum.DEC))
+dec_list.addChild(Node(ProductionTokensEnum.DEC))
 
 dec_list.children[0].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
 dec_list.children[0].addChild(Node(ProductionTokensEnum.ID, 'x'))
 
-dec_list.children[1].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.STRING))
-dec_list.children[1].addChild(Node(ProductionTokensEnum.ID, 'words'))
+dec_list.children[1].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
+dec_list.children[1].addChild(Node(ProductionTokensEnum.ID, 'y'))
+
+dec_list.children[2].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
+dec_list.children[2].addChild(Node(ProductionTokensEnum.ID, 'z'))
 
 op_list = Node(ProductionTokensEnum.OP_LIST)
 
@@ -192,10 +219,18 @@ op2 = Node(ProductionTokensEnum.ASSIGN)
 op2.addChild(Node(ProductionTokensEnum.ID, 'x'))
 op2.addChild(op1)
 
+userIn = Node(ProductionTokensEnum.INPUT)
+userIn.addChild(Node(ProductionTokensEnum.ID, 'y'))
+
+sum = Node(ProductionTokensEnum.PLUS)
+sum.addChild(Node(ProductionTokensEnum.ID, 'x'))
+sum.addChild(Node(ProductionTokensEnum.ID, 'y'))
+
 out = Node(ProductionTokensEnum.OUTPUT)
-out.addChild(Node(ProductionTokensEnum.ID, 'x'))
+out.addChild(sum)
 
 op_list.addChild(op2)
+op_list.addChild(userIn)
 op_list.addChild(out)
 
 start.addChild(dec_list)

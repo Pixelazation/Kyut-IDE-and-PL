@@ -41,3 +41,8 @@ BINARY_OPS = [ProductionTokensEnum.PLUS, ProductionTokensEnum.MINUS, ProductionT
 class DataTypesEnum(Enum):
     NUMBER = 'nom'
     STRING = 'stwing'
+    UNKNOWN = 'unknown'
+
+class SysCallsEnum(Enum):
+    PRINT_INT: int = 1
+    READ_INT: int = 5
