@@ -36,6 +36,9 @@ def lexer(code):
         if kind == 'NUMBER':
             value = float(value) if '.' in value else int(value)
             tokens.append((kind, value))
+        elif kind == 'STRING':
+            value = value.replace('"', '')
+            tokens.append((kind, value))
         elif kind == 'ID':
             tokens.append((kind, value))
         elif kind == 'NEWLINE':
