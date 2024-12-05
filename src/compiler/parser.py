@@ -189,5 +189,5 @@ class Parser:
             raise SyntaxError(f"Unexpected token: {value}")
 
 # printLevelOrder(Parser(lexer(open(input(),"r").read())).ast)
-printPostfixOrder(Parser(lexer(open(input(),"r").read())).ast)
+# printPostfixOrder(Parser(lexer(open(input(),"r").read())).ast)
 # Validate declared variables/IDs
