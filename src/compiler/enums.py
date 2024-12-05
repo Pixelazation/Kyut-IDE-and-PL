@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, IntEnum
 
 class TokenTypesEnum(Enum):
     TYPE = 'TYPE'        
@@ -43,6 +43,9 @@ class DataTypesEnum(Enum):
     STRING = 'stwing'
     UNKNOWN = 'unknown'
 
-class SysCallsEnum(Enum):
-    PRINT_INT: int = 1
-    READ_INT: int = 5
+class SysCallsEnum(IntEnum):
+    PRINT_INT = 1
+    READ_INT = 5
+    READ_STRING = 8
+
+STRING_BUFFER_LENGTH = 128

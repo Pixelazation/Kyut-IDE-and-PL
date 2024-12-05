@@ -167,7 +167,11 @@ class CodeGenerator:
     type = self._getIdType(idNode)
 
     if (type == DataTypesEnum.STRING):
-      pass
+      address = self._symbolTable[idNode.value]
+      self._addLine(f'la $a0, {address}')
+      self._addLine(f'li $a1, {STRING_BUFFER_LENGTH}')
+      self._syscall(SysCallsEnum.READ_STRING)
+      
     elif (type == DataTypesEnum.NUMBER):
       self._syscall(SysCallsEnum.READ_INT)
       self._addLine(f'sw $v0, {self._symbolTable[idNode.value]}')
@@ -199,6 +203,7 @@ dec_list = Node(ProductionTokensEnum.DEC_LIST)
 dec_list.addChild(Node(ProductionTokensEnum.DEC))
 dec_list.addChild(Node(ProductionTokensEnum.DEC))
 dec_list.addChild(Node(ProductionTokensEnum.DEC))
+dec_list.addChild(Node(ProductionTokensEnum.DEC))
 
 dec_list.children[0].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
 dec_list.children[0].addChild(Node(ProductionTokensEnum.ID, 'x'))
@@ -208,6 +213,9 @@ dec_list.children[1].addChild(Node(ProductionTokensEnum.ID, 'y'))
 
 dec_list.children[2].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
 dec_list.children[2].addChild(Node(ProductionTokensEnum.ID, 'z'))
+
+dec_list.children[3].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.STRING))
+dec_list.children[3].addChild(Node(ProductionTokensEnum.ID, 'my_str'))
 
 op_list = Node(ProductionTokensEnum.OP_LIST)
 
@@ -229,9 +237,13 @@ sum.addChild(Node(ProductionTokensEnum.ID, 'y'))
 out = Node(ProductionTokensEnum.OUTPUT)
 out.addChild(sum)
 
+userInStr = Node(ProductionTokensEnum.INPUT)
+userInStr.addChild(Node(ProductionTokensEnum.ID, 'my_str'))
+
 op_list.addChild(op2)
 op_list.addChild(userIn)
 op_list.addChild(out)
+op_list.addChild(userInStr)
 
 start.addChild(dec_list)
 start.addChild(op_list)
