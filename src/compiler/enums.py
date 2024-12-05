@@ -20,8 +20,8 @@ class TokenTypesEnum(Enum):
 
 class ProductionTokensEnum(Enum):
     PROGRAM = 'KYUT'
-    DEC_LIST = 'DECLARATION LIST'
-    OP_LIST = 'OPERATION LIST'
+    DEC_LIST = 'DECLARATION_LIST'
+    OP_LIST = 'OPERATION_LIST'
     DEC = 'DECLARATION'
     TYPE = 'TYPE' 
     OP = 'OPERATION'
@@ -46,6 +46,7 @@ class DataTypesEnum(Enum):
 class SysCallsEnum(IntEnum):
     PRINT_INT = 1
     READ_INT = 5
+    PRINT_STRING = 4
     READ_STRING = 8
 
 STRING_BUFFER_LENGTH = 128

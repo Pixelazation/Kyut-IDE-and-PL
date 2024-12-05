@@ -1,6 +1,10 @@
-from lexerparser import Node
+from parser import *
 from enums import *
 from typing import Dict
+
+# MISC
+BINARY_OPS_VAL = list(map(lambda prod_type: prod_type.value, BINARY_OPS))
+STR_BUFFER_ADDR = 'BUFFER'
 
 # Generator
 class CodeGenerator:
@@ -13,6 +17,7 @@ class CodeGenerator:
     self._generateDeclarations()
     self._generateOperations()
     self._generateExit()
+    self._generateHelpers()
     return self._code
   
   def _addLine(self, line: str = ''):
@@ -37,6 +42,9 @@ class CodeGenerator:
     self._addLine()
     self._addLine('.data')
     self._addLine()
+    self._addLine('NEWLN: .asciiz "\n"')
+    self._addLine(f'{STR_BUFFER_ADDR}: .space {STRING_BUFFER_LENGTH}')
+    self._addLine()
     self._declarationList(self._tree.children[0])
     self._addLine()
 
@@ -51,10 +59,26 @@ class CodeGenerator:
 
     self._addLine()
 
+  def _generateHelpers(self):
+    self._addLine()
+    self._comment('HELPERS')
+    self._helperCopyStr()
+
   def _generateExit(self):
     self._comment('Exit Program')
     self._addLine('li   $v0, 10          # system call for exit')
     self._addLine('syscall               # program exited')
+
+  def _helperCopyStr(self):
+    self._addLine('copy_loop:')
+    self._addLine('lb $t0, 0($a0)')
+    self._addLine('sb $t0, 0($a1)')
+    self._addLine('beq $t0, $zero, copy_loop_end')
+    self._addLine('addi $a0, $a0, 1')
+    self._addLine('addi $a1, $a1, 1')
+    self._addLine('j copy_loop_start')
+    self._addLine('copy_loop_end:')
+    self._addLine('jr $ra')
 
   def _pushStack(self, value: int | str):
     isInt = isinstance(value, int)
@@ -85,6 +109,27 @@ class CodeGenerator:
     self._addLine(f'li $v0, {code.value}           # Load system directive')
     self._addLine('syscall')
 
+  def _addNewline(self):
+    self._addLine(f'la $a0, NEWLN')
+    self._syscall(SysCallsEnum.PRINT_STRING)
+
+  def _loadStr(self, string: str, address: str):
+    if len(string) > 128:
+      raise Exception('String size too large!')
+    
+    self._addLine(f'la $t0, {STR_BUFFER_ADDR}')
+
+    for i in range(0, len(string)):
+      self._addLine(f"li $t1, '{string[i]}'")
+      self._addLine(f'sb $t1 {i}($t0)')
+    self._addLine(f"li $t1, 0")
+    self._addLine(f'sb $t1 {len(string)}($t0)')
+
+  def _copyStr(self, copyFromAddr, copyToAddr):
+    self._addLine(f'la $a0, {copyFromAddr}')
+    self._addLine(f'la $a1, {copyToAddr}')
+    self._addLine('jal copy_loop')
+
   # Productions
 
   def _declarationList(self, dec_list: Node):
@@ -95,10 +140,10 @@ class CodeGenerator:
     type = dec.children[0].value
     var_name = dec.children[1].value
     
-    if (type == DataTypesEnum.STRING):
+    if (type == DataTypesEnum.STRING.value):
       self._addLine(f'stw_{var_name}: .space 128')
       self._symbolTable[var_name] = f'stw_{var_name}'
-    elif (type == DataTypesEnum.NUMBER):
+    elif (type == DataTypesEnum.NUMBER.value):
       self._addLine(f'nom_{var_name}: .word 0')
       self._symbolTable[var_name] = f'nom_{var_name}'
 
@@ -109,20 +154,20 @@ class CodeGenerator:
   def _operationStatement(self, opStmt: Node):
     type = opStmt.type
 
-    if (type in BINARY_OPS):
+    if (type in BINARY_OPS_VAL):
       self._binaryOp(opStmt)
 
-    elif (type == ProductionTokensEnum.ASSIGN):
+    elif (type == ProductionTokensEnum.ASSIGN.value):
       self._assignment(opStmt)
 
-    elif (type == ProductionTokensEnum.INPUT):
+    elif (type == ProductionTokensEnum.INPUT.value):
       self._input(opStmt)
 
-    elif (type == ProductionTokensEnum.OUTPUT):
+    elif (type == ProductionTokensEnum.OUTPUT.value):
       self._output(opStmt)
   
   def _expression(self, exp: Node):
-    if exp.type in BINARY_OPS:
+    if exp.type in BINARY_OPS_VAL:
       self._operationStatement(exp)
     else:
       self._pushStack(exp.value)
@@ -136,27 +181,36 @@ class CodeGenerator:
     self._popStack(1)     # Pop Second Operand to $t1
     self._popStack(0)     # Pop First Operand to $t0
 
-    if (type == ProductionTokensEnum.PLUS):
+    if (type == ProductionTokensEnum.PLUS.value):
       self._addLine('add $t0, $t0, $t1')
-    elif(type == ProductionTokensEnum.MINUS):
+    elif(type == ProductionTokensEnum.MINUS.value):
       self._addLine('sub $t0, $t0, $t1')
-    elif(type == ProductionTokensEnum.TIMES):
+    elif(type == ProductionTokensEnum.TIMES.value):
       self._addLine('mul $t0, $t0, $t1')
-    elif(type == ProductionTokensEnum.DIVIDE):
+    elif(type == ProductionTokensEnum.DIVIDE.value):
       self._addLine('div $t0, $t0, $t1')
     
     self._pushStackFromReg(0)
 
   def _assignment(self, asOp: Node):
-    id = asOp.children[0].value
+    idNode = asOp.children[0]
+    id = idNode.value
+    idType = self._getIdType(idNode).value
     address = self._symbolTable[id]
 
     valueNode = asOp.children[1]
 
-    if valueNode.type == ProductionTokensEnum.STRING:
-      pass
+    if valueNode.type == ProductionTokensEnum.TYPE.value:
+      valueType = self._getIdType(idNode).value
 
-    else:
+      if not idType == valueType:
+        raise Exception(f"Assignment mismatch: {idType} and {valueNode.type}")
+
+    if idType == DataTypesEnum.STRING.value:
+      self._comment('TODO: STRING ASSIGNMENT')
+
+    elif idType == DataTypesEnum.NUMBER.value:
+      self._comment(f'{idType}')
       self._expression(asOp.children[1])
 
       self._popStack(0)
@@ -164,91 +218,103 @@ class CodeGenerator:
 
   def _input(self, inputOp: Node):
     idNode = inputOp.children[0]
-    type = self._getIdType(idNode)
+    type = self._getIdType(idNode).value
 
-    if (type == DataTypesEnum.STRING):
+    if (type == DataTypesEnum.STRING.value):
       address = self._symbolTable[idNode.value]
       self._addLine(f'la $a0, {address}')
       self._addLine(f'li $a1, {STRING_BUFFER_LENGTH}')
       self._syscall(SysCallsEnum.READ_STRING)
       
-    elif (type == DataTypesEnum.NUMBER):
+    elif (type == DataTypesEnum.NUMBER.value):
       self._syscall(SysCallsEnum.READ_INT)
       self._addLine(f'sw $v0, {self._symbolTable[idNode.value]}')
 
-
   def _output(self, outputOp: Node):
+    self._addNewline()
+
     valueNode = outputOp.children[0]
 
-    if valueNode.type == ProductionTokensEnum.STRING:
-      return
+    if valueNode.type == ProductionTokensEnum.STRING.value:
+      self._loadStr(valueNode.value, STR_BUFFER_ADDR)
+      self._addLine(f'la $a0, {STR_BUFFER_ADDR}')
+      self._syscall(SysCallsEnum.PRINT_STRING)
 
-    if valueNode.type == ProductionTokensEnum.ID:
-      # YOU NEED TO CHECK IF STRINGGGGGG
-      self._addLine(f'lw $a0, {self._symbolTable[valueNode.value]}')
-      self._syscall(SysCallsEnum.PRINT_INT)
+    elif valueNode.type == ProductionTokensEnum.ID.value:
 
-    else:
+      if self._getIdType(valueNode) == DataTypesEnum.STRING:
+        self._addLine(f'la $a0, {self._symbolTable[valueNode.value]}')
+        self._syscall(SysCallsEnum.PRINT_STRING)
+
+      elif self._getIdType(valueNode) == DataTypesEnum.NUMBER:
+        self._addLine(f'lw $a0, {self._symbolTable[valueNode.value]}')
+        self._syscall(SysCallsEnum.PRINT_INT)
+
+    elif valueNode.type == ProductionTokensEnum.NUMBER.value or valueNode.type in BINARY_OPS_VAL:
       self._expression(valueNode)
       self._popStack(0)
       self._addLine('move $a0, $t0')
       self._syscall(SysCallsEnum.PRINT_INT)
-      
+
+# Test
+syntaxTree = Parser(lexer(open(input(),"r").read())).ast
+generator = CodeGenerator(syntaxTree)
+print(generator.generateProgram())
 
 # Sample
 
-start = Node(ProductionTokensEnum.PROGRAM)
+# start = Node(ProductionTokensEnum.PROGRAM)
 
-dec_list = Node(ProductionTokensEnum.DEC_LIST)
-dec_list.addChild(Node(ProductionTokensEnum.DEC))
-dec_list.addChild(Node(ProductionTokensEnum.DEC))
-dec_list.addChild(Node(ProductionTokensEnum.DEC))
-dec_list.addChild(Node(ProductionTokensEnum.DEC))
+# dec_list = Node(ProductionTokensEnum.DEC_LIST)
+# dec_list.addChild(Node(ProductionTokensEnum.DEC))
+# dec_list.addChild(Node(ProductionTokensEnum.DEC))
+# dec_list.addChild(Node(ProductionTokensEnum.DEC))
+# dec_list.addChild(Node(ProductionTokensEnum.DEC))
 
-dec_list.children[0].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
-dec_list.children[0].addChild(Node(ProductionTokensEnum.ID, 'x'))
+# dec_list.children[0].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
+# dec_list.children[0].addChild(Node(ProductionTokensEnum.ID, 'x'))
 
-dec_list.children[1].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
-dec_list.children[1].addChild(Node(ProductionTokensEnum.ID, 'y'))
+# dec_list.children[1].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
+# dec_list.children[1].addChild(Node(ProductionTokensEnum.ID, 'y'))
 
-dec_list.children[2].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
-dec_list.children[2].addChild(Node(ProductionTokensEnum.ID, 'z'))
+# dec_list.children[2].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.NUMBER))
+# dec_list.children[2].addChild(Node(ProductionTokensEnum.ID, 'z'))
 
-dec_list.children[3].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.STRING))
-dec_list.children[3].addChild(Node(ProductionTokensEnum.ID, 'my_str'))
+# dec_list.children[3].addChild(Node(ProductionTokensEnum.TYPE, DataTypesEnum.STRING))
+# dec_list.children[3].addChild(Node(ProductionTokensEnum.ID, 'my_str'))
 
-op_list = Node(ProductionTokensEnum.OP_LIST)
+# op_list = Node(ProductionTokensEnum.OP_LIST)
 
-op1 = Node(ProductionTokensEnum.PLUS)
-op1.addChild(Node(ProductionTokensEnum.NUMBER, 5))
-op1.addChild(Node(ProductionTokensEnum.NUMBER, 12))
+# op1 = Node(ProductionTokensEnum.PLUS)
+# op1.addChild(Node(ProductionTokensEnum.NUMBER, 5))
+# op1.addChild(Node(ProductionTokensEnum.NUMBER, 12))
 
-op2 = Node(ProductionTokensEnum.ASSIGN)
-op2.addChild(Node(ProductionTokensEnum.ID, 'x'))
-op2.addChild(op1)
+# op2 = Node(ProductionTokensEnum.ASSIGN)
+# op2.addChild(Node(ProductionTokensEnum.ID, 'x'))
+# op2.addChild(op1)
 
-userIn = Node(ProductionTokensEnum.INPUT)
-userIn.addChild(Node(ProductionTokensEnum.ID, 'y'))
+# userIn = Node(ProductionTokensEnum.INPUT)
+# userIn.addChild(Node(ProductionTokensEnum.ID, 'y'))
 
-sum = Node(ProductionTokensEnum.PLUS)
-sum.addChild(Node(ProductionTokensEnum.ID, 'x'))
-sum.addChild(Node(ProductionTokensEnum.ID, 'y'))
+# sum = Node(ProductionTokensEnum.PLUS)
+# sum.addChild(Node(ProductionTokensEnum.ID, 'x'))
+# sum.addChild(Node(ProductionTokensEnum.ID, 'y'))
 
-out = Node(ProductionTokensEnum.OUTPUT)
-out.addChild(sum)
+# out = Node(ProductionTokensEnum.OUTPUT)
+# out.addChild(sum)
 
-userInStr = Node(ProductionTokensEnum.INPUT)
-userInStr.addChild(Node(ProductionTokensEnum.ID, 'my_str'))
+# userInStr = Node(ProductionTokensEnum.INPUT)
+# userInStr.addChild(Node(ProductionTokensEnum.ID, 'my_str'))
 
-op_list.addChild(op2)
-op_list.addChild(userIn)
-op_list.addChild(out)
-op_list.addChild(userInStr)
+# op_list.addChild(op2)
+# op_list.addChild(userIn)
+# op_list.addChild(out)
+# op_list.addChild(userInStr)
 
-start.addChild(dec_list)
-start.addChild(op_list)
+# start.addChild(dec_list)
+# start.addChild(op_list)
 
-codeGen = CodeGenerator(start)
-print(codeGen.generateProgram())
+# codeGen = CodeGenerator(start)
+# print(codeGen.generateProgram())
 
 

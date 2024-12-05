@@ -1,3 +1,7 @@
+from __future__ import annotations
+from typing import List
+from enums import *
+
 from scanner import lexer
 
 # Tree
@@ -5,7 +9,7 @@ class Node:
     def __init__(self, type, value):
         self.type = type
         self.value = value
-        self.children =[]
+        self.children: List[Node] =[]
     def addChild(self, child):
         self.children.append(child)
 def printLevelOrder(root):
