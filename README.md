@@ -33,7 +33,15 @@ $ npm run build:mac
 $ npm run build:linux
 ```
 
-### Build Compiler
+### Compiler
+
+You must have Python and Pyinstaller installed in order to build the compiler
+
+```bash
+$ pip install pyinstaller
+```
+
+Build the compiler
 
 ```bash
 # For windows
