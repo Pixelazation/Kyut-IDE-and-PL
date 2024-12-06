@@ -1,18 +1,17 @@
-nom   x    <3nom y <3
-stwing z  <3
-stwing a <3
+nom my_nom <3
+stwing words <3
 
+pwease my_nom <3
+rawr my_nom <3
 
-pwease y <3
-x + 5 <3
-x + 5 +4+2+x+y <3
-x + 3*5 +4<3 y +     3*5 +4<3
+my_nom = my_nom * 2 <3
+rawr my_nom + 5 <3
 
-y= 3*2 +5 <3 
-x = 2+3*5-3+7 <3 
-z = "hatdog" <3 	
-a = "ham<3borgs" <3
-a = "hamsdfaksdjhf  lkjsdhaflkj lkdj  jasdljfh" <3
-z = a <3
+my_nom = my_nom / 2 <3
+rawr my_nom <3
 
-rawr 5 * (4 + 5) * (4 + (6*7) - 5)<3
+pwease words <3
+rawr words <3
+
+words = "i am alive!!!" <3
+rawr words <3
