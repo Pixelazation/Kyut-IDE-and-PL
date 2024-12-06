@@ -260,8 +260,3 @@ class CodeGenerator:
       self._syscall(SysCallsEnum.PRINT_INT)
 
     self._addNewline()
-
-# Test
-syntaxTree = Parser(lexer(open(input(),"r").read())).ast
-generator = CodeGenerator(syntaxTree)
-print(generator.generateProgram())

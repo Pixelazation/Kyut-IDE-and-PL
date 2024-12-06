@@ -19,7 +19,7 @@
     "build:win": "npm run build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux",
-    "gen-compiler": "pyinstaller --onefile compiler/generator.py && mv dist/generator.exe kyut-compiler.exe && rm generator.spec"
+    "gen-compiler": "pyinstaller --onefile compiler/main.py && mv dist/main.exe kyut-compiler.exe && rm main.spec"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",

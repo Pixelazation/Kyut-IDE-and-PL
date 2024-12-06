@@ -7,3 +7,4 @@ out
 /.vscode
 compiler/build
 compiler/__pycache__
+*.exe
