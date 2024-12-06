@@ -20,7 +20,7 @@ $ npm install
 $ npm run dev
 ```
 
-### Build
+### Build Application
 
 ```bash
 # For windows
@@ -31,4 +31,12 @@ $ npm run build:mac
 
 # For Linux
 $ npm run build:linux
+```
+
+### Build Compiler
+
+```bash
+# For windows
+$ npm run gen-compiler
+
 ```
