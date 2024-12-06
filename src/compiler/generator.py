@@ -42,7 +42,7 @@ class CodeGenerator:
     self._addLine()
     self._addLine('.data')
     self._addLine()
-    self._addLine('NEWLN: .asciiz "\n"')
+    self._addLine('NEWLN: .asciiz "\\n"')
     self._addLine(f'{STR_BUFFER_ADDR}: .space {STRING_BUFFER_LENGTH}')
     self._addLine()
     self._declarationList(self._tree.children[0])
@@ -76,7 +76,7 @@ class CodeGenerator:
     self._addLine('beq $t0, $zero, copy_loop_end')
     self._addLine('addi $a0, $a0, 1')
     self._addLine('addi $a1, $a1, 1')
-    self._addLine('j copy_loop_start')
+    self._addLine('j copy_loop')
     self._addLine('copy_loop_end:')
     self._addLine('jr $ra')
 
@@ -207,10 +207,13 @@ class CodeGenerator:
         raise Exception(f"Assignment mismatch: {idType} and {valueNode.type}")
 
     if idType == DataTypesEnum.STRING.value:
-      self._comment('TODO: STRING ASSIGNMENT')
+      # self._comment('TODO: STRING ASSIGNMENT')
+      strToLoad = valueNode.value
+
+      self._loadStr(strToLoad, STR_BUFFER_ADDR)
+      self._copyStr(STR_BUFFER_ADDR, address)
 
     elif idType == DataTypesEnum.NUMBER.value:
-      self._comment(f'{idType}')
       self._expression(asOp.children[1])
 
       self._popStack(0)
@@ -225,13 +228,13 @@ class CodeGenerator:
       self._addLine(f'la $a0, {address}')
       self._addLine(f'li $a1, {STRING_BUFFER_LENGTH}')
       self._syscall(SysCallsEnum.READ_STRING)
+      # self._addNewline()
       
     elif (type == DataTypesEnum.NUMBER.value):
       self._syscall(SysCallsEnum.READ_INT)
       self._addLine(f'sw $v0, {self._symbolTable[idNode.value]}')
 
   def _output(self, outputOp: Node):
-    self._addNewline()
 
     valueNode = outputOp.children[0]
 
@@ -255,6 +258,8 @@ class CodeGenerator:
       self._popStack(0)
       self._addLine('move $a0, $t0')
       self._syscall(SysCallsEnum.PRINT_INT)
+
+    self._addNewline()
 
 # Test
 syntaxTree = Parser(lexer(open(input(),"r").read())).ast
