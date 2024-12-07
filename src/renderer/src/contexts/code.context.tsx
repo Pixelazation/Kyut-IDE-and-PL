@@ -19,6 +19,7 @@ export default function CodeProvider(props: Readonly<CodeAccessProviderPropsType
   const [editorOpen, setEditorOpen] = useState<boolean>(false)
   const [file, setFile] = useState<string>('')
   const [lastSavedCode, setLastSavedCode] = useState<string>('')
+  const [lastCompiledCode, setLastCompiledCode] = useState<string>('')
 
   async function save(): Promise<boolean> {
     setLastSavedCode(code)
@@ -47,24 +48,28 @@ export default function CodeProvider(props: Readonly<CodeAccessProviderPropsType
       code,
       editorOpen,
       file,
+      lastCompiledCode,
       lastSavedCode,
       save,
       saveAs,
       setCode,
       setEditorOpen,
       setFile,
+      setLastCompiledCode,
       setLastSavedCode
     }),
     [
       code,
       editorOpen,
       file,
+      lastCompiledCode,
       lastSavedCode,
       save,
       saveAs,
       setCode,
       setEditorOpen,
       setFile,
+      setLastCompiledCode,
       setLastSavedCode
     ]
   )
