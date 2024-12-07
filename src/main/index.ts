@@ -92,10 +92,10 @@ app.whenReady().then(() => {
   ipcMain.handle('dialog:openFile', handleFileOpen)
   ipcMain.handle('dialog:getSaveFile', handleFileSave)
   ipcMain.handle('dialog:confirmUnsaved', showConfirmationPrompt)
-  ipcMain.handle('dialog:showError', (e, ...args) => showError(args[0] as string))
+  ipcMain.handle('dialog:showError', (...args) => showError(args[1] as string))
 
-  ipcMain.handle('cmd:compile', (e, ...args) => handleCompile(args[0] as string))
-  ipcMain.handle('cmd:run', (e, ...args) => handleRun(args[0] as string))
+  ipcMain.handle('cmd:compile', (...args) => handleCompile(args[1] as string))
+  ipcMain.handle('cmd:run', (...args) => handleRun(args[1] as string))
 
   createWindow()
 
