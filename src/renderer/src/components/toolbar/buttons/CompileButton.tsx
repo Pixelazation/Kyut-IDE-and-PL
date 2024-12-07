@@ -14,7 +14,9 @@ function CompileButton(): JSX.Element {
         setChangedFromCompile(false)
         setLastCompiledCode(code)
       })
-      .catch((err) => console.error(err))
+      .catch((err) =>
+        window.api.showError('Compilation error: Double check your syntax\n' + String(err))
+      )
   }
 
   // Check if code has changed from last save

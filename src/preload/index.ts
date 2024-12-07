@@ -18,6 +18,7 @@ const api = {
     return false
   },
   selectFile: (): Promise<string | null> => ipcRenderer.invoke('dialog:openFile'),
+  showError: (err: string): Promise<void> => ipcRenderer.invoke('dialog:showError', err),
 
   onConfirmClose: (callback: () => void): Electron.IpcRenderer =>
     ipcRenderer.on('confirm-close', () => callback()),

@@ -9,12 +9,19 @@ function ExecuteButton(): JSX.Element {
   async function handleClick(): Promise<void> {
     if (changedFromCompile) {
       file === '' ? await saveAs() : await save()
-      await window.api.compile(file)
-      setChangedFromCompile(false)
-      setLastCompiledCode(code)
+      window.api
+        .compile(file)
+        .then(() => {
+          setChangedFromCompile(false)
+          setLastCompiledCode(code)
+          window.api.run(file)
+        })
+        .catch((err) =>
+          window.api.showError('Compilation error: Double check your syntax\n' + String(err))
+        )
+    } else {
+      window.api.run(file)
     }
-
-    window.api.run(file)
   }
 
   // Check if code has changed from last save

@@ -10,6 +10,7 @@ declare global {
       readFile: (file: string) => string
       saveFile: (file: string, content: string) => boolean
       selectFile: () => Promise<string | null>
+      showError: (err: string) => Promise<void>
       onConfirmClose: (callback: () => void) => Electron.IpcRenderer
       confirmClose: () => void
       refreshCloseListener: () => Electron.IpcRenderer
